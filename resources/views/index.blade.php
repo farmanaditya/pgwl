@@ -1,50 +1,196 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Peta</title>
-    {{-- leaflet css --}}
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+@extends('layouts.template')
 
+@section('styles')
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css">
+<style>
+        html, body {
+            height: 100%;
+            width: 100%;
+        }
+        #map {
+            height: calc(100vh - 56px);
+            width: 100%;
+            margin: 0%
+        }</style>
+@endsection
 </head>
-<body>
-    <div id="map"></div>
-    <style>g
-    html, body, #map {
-        height: 100%;
-        width: 100%;
-        margin: 0%;
-    }</style>
 
-    {{-- leaflet js --}}
-    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+<body>
+    @section('content')
+    <div id="map"></div>
+
+    <!-- Modal Create Point -->
+        <div class="modal fade" id="PointModal" tabindex="-1" aria-labelledby="PointModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Create Point</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="{{ route('store-point') }}" method="POST">
+                    @csrf
+                <div class="mb-3">
+                    <label for="name" class="form-label">Name</label>
+                    <input type="text" class="form-control" id="name" name="name" placeholder="Fill point name">
+                </div>
+                <div class="mb-3">
+                    <label for="description" class="form-label">Descirption</label>
+                    <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+                </div>
+                <div class="mb-3">
+                    <label for="geom" class="form-label">Geometry</label>
+                    <textarea class="form-control" id="geom_point" name="geom" rows="3" readonly></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </form>
+                </div>
+            </div>
+            </div>
+
+        <!-- Modal Create Polyline -->
+        </div>
+        <div class="modal fade" id="PolylineModal" tabindex="-1" aria-labelledby="PolylineModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Create Polyline</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="{{ route('store-polyline') }}" method="POST">
+                    @csrf
+                <div class="mb-3">
+                    <label for="name" class="form-label">Name</label>
+                    <input type="text" class="form-control" id="name" name="name" placeholder="Fill point name">
+                </div>
+                <div class="mb-3">
+                    <label for="description" class="form-label">Descirption</label>
+                    <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+                </div>
+                <div class="mb-3">
+                    <label for="geom" class="form-label">Geometry</label>
+                    <textarea class="form-control" id="geom_polyline" name="geom" rows="3" readonly></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </form>
+                </div>
+            </div>
+            </div>
+        </div>
+
+        <!-- Modal Create Polygon -->
+        </div>
+        <div class="modal fade" id="PolygonModal" tabindex="-1" aria-labelledby="PolygonModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Create Polygon</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="{{ route('store-polygon') }}" method="POST">
+                    @csrf
+                <div class="mb-3">
+                    <label for="name" class="form-label">Name</label>
+                    <input type="text" class="form-control" id="name" name="name" placeholder="Fill polygon name">
+                </div>
+                <div class="mb-3">
+                    <label for="description" class="form-label">Descirption</label>
+                    <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+                </div>
+                <div class="mb-3">
+                    <label for="geom" class="form-label">Geometry</label>
+                    <textarea class="form-control" id="geom_polygon" name="geom" rows="3" readonly></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </form>
+                </div>
+            </div>
+            </div>
+        </div>
+    @endsection
+
+    @section('script')
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
+        <script src="https://unpkg.com/terraformer@1.0.7/terraformer.js"></script>
+        <script src="https://unpkg.com/terraformer-wkt-parser@1.1.2/terraformer-wkt-parser.js"></script>
     <script>
         //Map
         var map = L.map('map').setView([-6.1753924, 106.8271528], 13);
 
         // Basemap
-    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19,
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-    }).addTo(map);
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
 
-    //Marker
-    var marker = L.marker([-6.1753924, 106.8271528]).addTo(map);
+    /* Digitize Function */
+        var drawnItems = new L.FeatureGroup();
+        map.addLayer(drawnItems);
 
-    //popup
-    marker.bindPopup("<b>Jakarta</b><br>Capital City").openPopup();
+    var drawControl = new L.Control.Draw({
+        draw: {
+		position: 'topleft',
+		polyline: true,
+		polygon: true,
+		rectangle: true,
+		circle: false,
+		marker: true,
+		circlemarker: false
+	},
+	edit: false
+});
 
-    //circle
-    var circle = L.circle([-6.1753924, 106.8271528], {
-        color: 'red',
-        fillColor: '#f03',
-        fillOpacity: 0.5,
-        radius: 1500
-    }).addTo(map);
+map.addControl(drawControl);
+
+map.on('draw:created', function(e) {
+	var type = e.layerType,
+		layer = e.layer;
+
+	console.log(type);
+
+	var drawnJSONObject = layer.toGeoJSON();
+	var objectGeometry = Terraformer.WKT.convert(drawnJSONObject.geometry);
+
+	console.log(drawnJSONObject);
+	console.log(objectGeometry);
+
+	if (type === 'polyline') {
+		// Set value geometry to input geom
+        $("#geom_polyline").val(objectGeometry);
+
+        // Show modal
+        $("#PolylineModal").modal('show');
+	} else if (type === 'polygon' || type === 'rectangle') {
+		// Set value geometry to input geom
+        $("#geom_polygon").val(objectGeometry);
+
+        // Show modal
+        $("#PolygonModal").modal('show');
+	} else if (type === 'marker') {
+        // Set value geometry to input geom
+        $("#geom_point").val(objectGeometry);
+
+        // Show modal
+        $("#PointModal").modal('show');
+	} else {
+		console.log('_undefined_');
+	}
+
+	drawnItems.addLayer(layer);
+});
 
     </script>
-    {{-- <h1>Ini halaman Laravel, praktikum PGWL</h1> --}}
+    @endsection
 </body>
 </html>
