@@ -1,23 +1,41 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Models\Polygons;
+
 use Illuminate\Http\Request;
+use App\Models\Polygons;
+use App\Http\Controllers\Controller;
 
 class PolygonController extends Controller
 {
-
     public function __construct()
     {
         $this->polygon = new Polygons();
-    } //variabel global untuk memanggil modal polygon
-
+    }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //
+        $polygons = $this->polygon->polygons();
+
+        foreach ($polygons as $polygon){
+            $feature[] = [
+                'type' => 'Feature',
+                'geometry' => json_decode($polygon->geom),
+                'properties' => [
+                    'name' => $polygon->name,
+                    'description' => $polygon->description,
+                    'created_at' => $polygon->created_at,
+                    'updated_at' => $polygon->updated_at
+                ]
+            ];
+        }
+
+        return response()->json([
+            'type' => 'FeatureColllection',
+            'features' => $feature,
+        ]);
     }
 
     /**
@@ -33,29 +51,30 @@ class PolygonController extends Controller
      */
     public function store(Request $request)
     {
-        // Validate Request
+        // validate request
         $request->validate([
             'name' => 'required',
             'geom' => 'required'
-        ], [
+        ],
+        [
             'name.required' => 'Name is required',
             'geom.required' => 'Location is required'
         ]);
 
-        // Data
         $data = [
             'name' => $request->name,
             'description' => $request->description,
             'geom' => $request->geom
         ];
 
-        // Create Polygon
-       if(!$this->polygon->create($data)) {
+
+        // Create Point
+        if(!$this->polygon->create($data)){
             return redirect()->back()->with('error', 'Failed to create polygon');
         }
 
         // Redirect To Map
-        return redirect()->back()->with('success', 'Polygon created successfully');
+        return redirect()->back()->with('success', 'Polygon create Successfully');
     }
 
     /**

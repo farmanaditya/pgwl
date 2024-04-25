@@ -84,7 +84,6 @@
             </div>
             </div>
         </div>
-
         <!-- Modal Create Polygon -->
         </div>
         <div class="modal fade" id="PolygonModal" tabindex="-1" aria-labelledby="PolygonModalLabel" aria-hidden="true">
@@ -190,7 +189,78 @@ map.on('draw:created', function(e) {
 	drawnItems.addLayer(layer);
 });
 
+    /* GeoJSON Point */
+			var point = L.geoJson(null, {
+				onEachFeature: function (feature, layer) {
+					var popupContent = "Nama: " + feature.properties.name + "<br>" +
+						"Deskripsi: " + feature.properties.description;
+					layer.on({
+						click: function (e) {
+							point.bindPopup(popupContent);
+						},
+						mouseover: function (e) {
+							point.bindTooltip(feature.properties.name, {
+                                direction: "top",
+                            }).openTooltip();
+						},
+					});
+				},
+			});
+			$.getJSON("{{ route('api.points') }}", function (data) {
+				point.addData(data);
+				map.addLayer(point);
+			});
+    /* GeoJSON polyline */
+			var polyline = L.geoJson(null, {
+				onEachFeature: function (feature, layer) {
+					var popupContent = "Nama: " + feature.properties.name + "<br>" +
+						"Deskripsi: " + feature.properties.description;
+					layer.on({
+						click: function (e) {
+							polyline.bindPopup(popupContent);
+						},
+						mouseover: function (e) {
+							polyline.bindTooltip(feature.properties.name, {
+                                direction: "top",
+                            }).openTooltip();
+						},
+					});
+				},
+			});
+			$.getJSON("{{ route('api.polylines') }}", function (data) {
+				polyline.addData(data);
+				map.addLayer(polyline);
+			});
+    /* GeoJSON polygon */
+			var polygon = L.geoJson(null, {
+				onEachFeature: function (feature, layer) {
+					var popupContent = "Nama: " + feature.properties.name + "<br>" +
+						"Deskripsi: " + feature.properties.description;
+					layer.on({
+						click: function (e) {
+							polygon.bindPopup(popupContent);
+						},
+						mouseover: function (e) {
+							polygon.bindTooltip(feature.properties.name, {
+                                direction: "top",
+                            }).openTooltip();
+						},
+					});
+				},
+			});
+			$.getJSON("{{ route('api.polygons') }}", function (data) {
+				polygon.addData(data);
+				map.addLayer(polygon);
+			});
+
+            // Layer Control
+            var overlayMaps = {
+                "Point": point,
+                "Polyline": polyline,
+                "Polygon": polygon
+          };
+
+          var layerControl = L.control.layers(null, overlayMaps).addTo(map);
+
     </script>
     @endsection
-</body>
-</html>

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -14,6 +15,13 @@ class Points extends Model
     protected $fillable = [
         'name',
         'description',
-        'geom' 
+        'geom'
     ];
+
+    public function points()
+    {
+        return $this->select(DB::raw('id, name, description, ST_AsGeoJSON(geom) as geom, created_at,
+        updated_at'))->get();
+    }
+
 }

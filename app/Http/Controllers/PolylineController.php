@@ -1,8 +1,8 @@
 <?php
 
 namespace App\Http\Controllers;
-
 use App\Models\Polylines;
+
 use Illuminate\Http\Request;
 
 class PolylineController extends Controller
@@ -11,14 +11,31 @@ class PolylineController extends Controller
     public function __construct()
     {
         $this->polyline = new Polylines();
-    } //variabel global untuk memanggil modal polyline
-
+    }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //
+        $polylines = $this->polyline->polylines();
+
+        foreach ($polylines as $polyline){
+            $feature[] = [
+                'type' => 'Feature',
+                'geometry' => json_decode($polyline->geom),
+                'properties' => [
+                    'name' => $polyline->name,
+                    'description' => $polyline->description,
+                    'created_at' => $polyline->created_at,
+                    'updated_at' => $polyline->updated_at
+                ]
+            ];
+        }
+
+        return response()->json([
+            'type' => 'FeatureColllection',
+            'features' => $feature,
+        ]);
     }
 
     /**
@@ -34,29 +51,30 @@ class PolylineController extends Controller
      */
     public function store(Request $request)
     {
-        // Validate Request
+        // validate request
         $request->validate([
             'name' => 'required',
             'geom' => 'required'
-        ], [
+        ],
+        [
             'name.required' => 'Name is required',
             'geom.required' => 'Location is required'
         ]);
 
-        // Data
         $data = [
             'name' => $request->name,
             'description' => $request->description,
             'geom' => $request->geom
         ];
 
+
         // Create Polyline
-       if(!$this->polyline->create($data)) {
+        if(!$this->polyline->create($data)){
             return redirect()->back()->with('error', 'Failed to create polyline');
         }
 
         // Redirect To Map
-        return redirect()->back()->with('success', 'Polyline created successfully');
+        return redirect()->back()->with('success', 'Polyline create Successfully');
     }
 
     /**
