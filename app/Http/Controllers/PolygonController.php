@@ -26,6 +26,7 @@ class PolygonController extends Controller
                 'properties' => [
                     'name' => $polygon->name,
                     'description' => $polygon->description,
+                    'image' => $polygon->image,
                     'created_at' => $polygon->created_at,
                     'updated_at' => $polygon->updated_at
                 ]
@@ -61,11 +62,27 @@ class PolygonController extends Controller
             'geom.required' => 'Location is required'
         ]);
 
-        $data = [
-            'name' => $request->name,
-            'description' => $request->description,
-            'geom' => $request->geom
-        ];
+       // create folder images
+       if (!is_dir('storage/images')) {
+        mkdir('storage/images', 0777);
+     }
+
+
+   // upload image
+       if ($request->hasFile('image')) {
+           $image = $request->file('image');
+           $filename = time() . '_polygon.' . $image->getClientOriginalExtension();
+           $image->move('storage/images', $filename);
+       } else {
+           $filename = null;
+       }
+
+       $data = [
+           'name' => $request->name,
+           'description' => $request->description,
+           'geom' => $request->geom,
+           'image' => $filename
+       ];
 
 
         // Create Point

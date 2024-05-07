@@ -26,6 +26,7 @@ class PolylineController extends Controller
                 'properties' => [
                     'name' => $polyline->name,
                     'description' => $polyline->description,
+                    'image' => $polyline->image,
                     'created_at' => $polyline->created_at,
                     'updated_at' => $polyline->updated_at
                 ]
@@ -54,18 +55,39 @@ class PolylineController extends Controller
         // validate request
         $request->validate([
             'name' => 'required',
-            'geom' => 'required'
+            'geom' => 'required',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,tiff,gif|max:10000' // 10MB
         ],
         [
             'name.required' => 'Name is required',
-            'geom.required' => 'Location is required'
+            'geom.required' => 'Location is required',
+            'image.mimes' => 'Image must be a file of type: jpeg, png, jpg, tiff, gif',
+            'image.max' => 'Image must not exceed max 10MB'
         ]);
 
-        $data = [
-            'name' => $request->name,
-            'description' => $request->description,
-            'geom' => $request->geom
-        ];
+        // create folder images
+        if (!is_dir('storage/images')) {
+            mkdir('storage/images', 0777);
+         }
+
+
+       // upload image
+           if ($request->hasFile('image')) {
+               $image = $request->file('image');
+               $filename = time() . '_polyline.' . $image->getClientOriginalExtension();
+               $image->move('storage/images', $filename);
+           } else {
+               $filename = null;
+           }
+
+           $data = [
+               'name' => $request->name,
+               'description' => $request->description,
+               'geom' => $request->geom,
+               'image' => $filename
+           ];
+
+
 
 
         // Create Polyline
