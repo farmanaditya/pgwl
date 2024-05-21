@@ -163,7 +163,7 @@ class PointController extends Controller
             return redirect()->back()->with('error', 'Failed to delete point');
         }
 
-        // delete image
+        // delete  image
         if ($image != null) {
             unlink('storage/images/' . $image);
         }
