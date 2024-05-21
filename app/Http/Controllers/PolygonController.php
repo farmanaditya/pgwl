@@ -24,6 +24,7 @@ class PolygonController extends Controller
                 'type' => 'Feature',
                 'geometry' => json_decode($polygon->geom),
                 'properties' => [
+                    'id' => $polygon->id,
                     'name' => $polygon->name,
                     'description' => $polygon->description,
                     'image' => $polygon->image,
@@ -55,34 +56,36 @@ class PolygonController extends Controller
         // validate request
         $request->validate([
             'name' => 'required',
-            'geom' => 'required'
+            'geom' => 'required',
+            'image' => 'mimes:png,jpg,jpeg,gif,tiff|max:10000' //10MB
         ],
         [
             'name.required' => 'Name is required',
-            'geom.required' => 'Location is required'
+            'geom.required' => 'Location is required',
+            'image.mimes' => 'Image must be a file of type: png, jpg, jpeg, gif, tiff',
+            'image.max' => 'Image must not exceed max 10000'
         ]);
 
-       // create folder images
-       if (!is_dir('storage/images')) {
-        mkdir('storage/images', 0777);
-     }
+        // Create folder images
+        if (!is_dir('storage/images')) {
+            mkdir('storage/images', 0777);
+        }
 
+        // upload image
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $filename = time() . '_polygon.' . $image->getClientOriginalExtension();
+            $image->move('storage/images', $filename);
+        } else {
+            $filename = null;
+        }
 
-   // upload image
-       if ($request->hasFile('image')) {
-           $image = $request->file('image');
-           $filename = time() . '_polygon.' . $image->getClientOriginalExtension();
-           $image->move('storage/images', $filename);
-       } else {
-           $filename = null;
-       }
-
-       $data = [
-           'name' => $request->name,
-           'description' => $request->description,
-           'geom' => $request->geom,
-           'image' => $filename
-       ];
+        $data = [
+            'name' => $request->name,
+            'description' => $request->description,
+            'geom' => $request->geom,
+            'image' => $filename
+        ];
 
 
         // Create Point
@@ -123,6 +126,20 @@ class PolygonController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+         //get image
+         $image = $this->polygon->find($id)->image;
+
+         //delete polygon
+         if (!$this->polygon->destroy($id)) {
+             return redirect()->back()->with('error', 'Failed to delete polygon');
+         }
+
+         // delete image
+         if ($image != null) {
+             unlink('storage/images/' . $image);
+         }
+
+            //redirect to map
+            return redirect()->back()->with('success', 'polygon deleted successfuly');
     }
 }

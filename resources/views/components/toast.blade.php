@@ -13,7 +13,7 @@
     </div>
   </div>
   <script>
-    var toastLive = document.getElementById('liveToastSuccess')
+    var toastLive = document.getElementById('liveToastSuccess') 
     var toast = new bootstrap.Toast(toastLive)
 
     toast.show()
