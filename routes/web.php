@@ -31,6 +31,9 @@ Route::delete('/delete-point/{id}', [PointController::class, 'destroy'])->name('
 // edit point
 Route::get('/edit-point/{id}', [PointController::class, 'edit'])->name('edit-point');
 
+//update Point
+Route::patch('/update-point/{id}', [PointController::class, 'update'])->name('update-point');
+
 // create polyline
 Route::post('/store-polyline', [PolylineController::class, 'store'])->name('store-polyline');
 
@@ -40,6 +43,9 @@ Route::delete('/delete-polyline/{id}', [PolylineController::class, 'destroy'])->
 // edit polyline
 Route::get('/edit-polyline/{id}', [PolylineController::class, 'edit'])->name('edit-polyline');
 
+//update polyline
+Route::patch('/update-polyline/{id}', [PolylineController::class, 'update'])->name('update-polyline');
+
 // create polygon
 Route::post('/store-polygon', [PolygonController::class, 'store'])->name('store-polygon');
 
@@ -48,6 +54,9 @@ Route::delete('/delete-polygon/{id}', [PolygonController::class, 'destroy'])->na
 
 // edit polygon
 Route::get('/edit-polygon/{id}', [PolygonController::class, 'edit'])->name('edit-polygon');
+
+//update polygon
+Route::patch('/update-polygon/{id}', [PolygonController::class, 'update'])->name('update-polygon');
 
 
 Route::get('/about', function () {
@@ -68,3 +77,4 @@ Route::middleware('auth')->group(function () {
 Route::get('/table-point', [PointController::class, 'table'])->name('table-point');
 
 require __DIR__.'/auth.php';
+

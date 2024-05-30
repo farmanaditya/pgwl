@@ -30,5 +30,11 @@ Route::get('/point/{id}', [PointController::class, 'show'])->name('api.point');
 // GeoJSON polylines
 Route::get('/polylines', [PolylineController::class, 'index'])->name('api.polylines');
 
+// GeoJSON polyline
+Route::get('/polyline/{id}', [PolylineController::class, 'show'])->name('api.polyline');
+
 // GeoJSON polygons
 Route::get('/polygons', [PolygonController::class, 'index'])->name('api.polygons');
+
+// GeoJSON polygon
+Route::get('/polygon/{id}', [PolygonController::class, 'show'])->name('api.polygon');
