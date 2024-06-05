@@ -11,7 +11,12 @@ class MapController extends Controller
         $data = [
             "title" => "Petaku",
         ];
-        return view('index', $data);
+        // check if user is login
+        if (auth()->check()) {
+            return view('index', $data);
+        } else {
+            return view('index-public', $data);
+        }
     }
 
     public function table()
