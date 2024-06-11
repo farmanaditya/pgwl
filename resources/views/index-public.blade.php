@@ -41,10 +41,10 @@
             /* GeoJSON Point */
             var point = L.geoJson(null, {
                 onEachFeature: function(feature, layer) {
-                    var popupContent = "Nama: " + feature.properties.name + "<br>" +
-                        "Deskripsi: " + feature.properties.description + "<br>" +
-                        "Foto: <img src='{{ asset('storage/images') }}/" + feature.properties.image +
-                        "' width='100px'>" ;
+                    var popupContent = "<h3>" + feature.properties.name + "</h3>" +
+                            " " + feature.properties.description + "<br>" +
+                            " <br><img src='{{ asset('storage/images') }}/" + feature.properties.image +
+                            "' width='200px'>";
 
                     layer.on({
                         click: function(e) {
@@ -66,10 +66,10 @@
             /* GeoJSON polyline */
             var polyline = L.geoJson(null, {
                 onEachFeature: function(feature, layer) {
-                    var popupContent = "Nama: " + feature.properties.name + "<br>" +
-                        "Deskripsi: " + feature.properties.description + "<br>" +
-                        "Foto: <img src='{{ asset('storage/images') }}/" + feature.properties.image +
-                        "' class='img-thumbnail' alt='' width='100px'>" + "<br>";
+                    var popupContent = "<h3>" + feature.properties.name + "</h3>" +
+                            " " + feature.properties.description + "<br>" +
+                            " <br><img src='{{ asset('storage/images') }}/" + feature.properties.image +
+                            "' width='200px'>" + "<br>";
                     layer.on({
                         click: function(e) {
                             layer.bindPopup(popupContent).openPopup();
@@ -90,10 +90,10 @@
             /* GeoJSON polygon */
             var polygon = L.geoJson(null, {
                 onEachFeature: function(feature, layer) {
-                    var popupContent = "Nama: " + feature.properties.name + "<br>" +
-                        "Deskripsi: " + feature.properties.description + "<br>" +
-                        "Foto: <img src='{{ asset('storage/images') }}/" + feature.properties.image +
-                        "' width='100px'>"
+                    var popupContent = "<h3>" + feature.properties.name + "</h3>" +
+                            " " + feature.properties.description + "<br>" +
+                            " <br><img src='{{ asset('storage/images') }}/" + feature.properties.image +
+                            "' width='200px'>"
                     ;
                     layer.on({
                         click: function(e) {

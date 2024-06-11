@@ -88,7 +88,7 @@ class PolygonController extends Controller
         ];
 
 
-        // Create Point
+        // Create Polygon
         if(!$this->polygon->create($data)){
             return redirect()->back()->with('error', 'Failed to create polygon');
         }
@@ -218,4 +218,18 @@ class PolygonController extends Controller
             //redirect to map
             return redirect()->back()->with('success', 'polygon deleted successfuly');
     }
+
+    public function table()
+    {
+        $polygons = $this->polygon->polygons();
+
+        $data = [
+            'title' => 'Table Polygon',
+            'polygons' => $polygons
+        ];
+
+        return view('table-polygon', $data);
+    }
+
+
 }

@@ -226,7 +226,7 @@ class PointController extends Controller
 
     public function table()
     {
-        $points = $this->point->all();
+        $points = $this->point->points();
 
         $data = [
             'title' => 'Table Point',
