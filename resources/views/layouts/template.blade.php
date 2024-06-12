@@ -86,12 +86,12 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel">Info Apa Tuch?</h1>
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Info</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    Meyna Anjar Nilawati <br>
-                    22/494861/SV/20925
+                    Farmana Ditya Alya Safitri <br>
+                    22/493937/SV/20758
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
